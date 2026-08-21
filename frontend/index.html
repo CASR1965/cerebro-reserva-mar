@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Cerebro Digital - Reserva del Mar</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eaf8ff,
+                    #ffffff
+                );
+
+            color: #17324d;
+        }
+
+
+        .contenedor {
+            width: min(900px, 92%);
+            margin: 50px auto;
+        }
+
+
+        .encabezado {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+
+        .encabezado h1 {
+            margin-bottom: 10px;
+            font-size: 38px;
+        }
+
+
+        .encabezado p {
+            font-size: 18px;
+            color: #526b7d;
+            line-height: 1.5;
+        }
+
+
+        .panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+
+            box-shadow:
+                0 10px 35px
+                rgba(0, 0, 0, 0.10);
+        }
+
+
+        .entrada {
+            display: flex;
+            gap: 12px;
+        }
+
+
+        #mensaje {
+            flex: 1;
+
+            padding: 16px;
+
+            border:
+                1px solid
+                #c9d8e2;
+
+            border-radius: 12px;
+
+            font-size: 16px;
+
+            outline: none;
+        }
+
+
+        #mensaje:focus {
+            border-color: #198754;
+        }
+
+
+        button {
+            border: none;
+
+            border-radius: 12px;
+
+            padding: 16px 24px;
+
+            background: #198754;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+
+        #resultado {
+            margin-top: 25px;
+        }
+
+
+        .respuesta {
+            padding: 25px;
+
+            border-radius: 16px;
+
+            background: #f5fbff;
+
+            border:
+                1px solid
+                #d8eaf3;
+
+            line-height: 1.6;
+        }
+
+
+        .respuesta h2 {
+            margin-top: 0;
+        }
+
+
+        .atributos {
+            margin-top: 20px;
+
+            padding: 15px;
+
+            border-radius: 12px;
+
+            background: white;
+
+            border:
+                1px solid
+                #e0edf3;
+        }
+
+
+        .datos-reserva {
+            margin-top: 20px;
+
+            padding: 20px;
+
+            border-radius: 14px;
+
+            background: #fff;
+
+            border:
+                2px solid
+                #198754;
+        }
+
+
+        .datos-reserva h3 {
+            margin-top: 0;
+            color: #17324d;
+        }
+
+
+        .dato {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+
+        .reserva-completa {
+            margin-top: 15px;
+
+            padding: 10px;
+
+            border-radius: 8px;
+
+            background: #eaf8f0;
+
+            color: #176b3a;
+
+            font-weight: bold;
+        }
+
+
+        .reserva-incompleta {
+            margin-top: 15px;
+
+            padding: 10px;
+
+            border-radius: 8px;
+
+            background: #fff8e5;
+
+            color: #856404;
+
+            font-weight: bold;
+        }
+
+
+        .recursos {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(140px, 1fr)
+                );
+
+            gap: 12px;
+
+            margin-top: 20px;
+        }
+
+
+        .recurso {
+            display: block;
+
+            text-decoration: none;
+
+            text-align: center;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            background: #17324d;
+
+            color: white;
+
+            font-weight: bold;
+        }
+
+
+        .recurso:hover {
+            opacity: 0.9;
+        }
+
+
+        .whatsapp {
+            display: block;
+
+            margin-top: 20px;
+
+            padding: 16px;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            border-radius: 12px;
+
+            background: #25d366;
+
+            color: white;
+
+            font-size: 18px;
+
+            font-weight: bold;
+        }
+
+
+        .whatsapp:hover {
+            opacity: 0.9;
+        }
+
+
+        .cargando {
+            text-align: center;
+
+            color: #526b7d;
+
+            padding: 15px;
+        }
+
+
+        .error {
+            padding: 15px;
+
+            border-radius: 10px;
+
+            background: #fff0f0;
+
+            color: #a33;
+        }
+
+
+        .estado {
+            margin-top: 15px;
+
+            color: #526b7d;
+
+            font-size: 14px;
+        }
+
+
+        .deteccion {
+            margin-top: 15px;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            background: #eaf8ff;
+
+            font-size: 14px;
+        }
+
+
+        @media (max-width: 650px) {
+
+            .entrada {
+                flex-direction: column;
+            }
+
+
+            button {
+                width: 100%;
+            }
+
+
+            .encabezado h1 {
+                font-size: 30px;
+            }
+
+
+            .panel {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="contenedor">
+
+
+    <div class="encabezado">
+
+        <h1>
+            🌊 Cerebro Digital
+        </h1>
+
+
+        <p>
+            Condominio Reserva del Mar ·
+            Santa Marta ·
+            Caribe colombiano
+        </p>
+
+
+        <p>
+            Descubre el mejor destino turístico
+            en Santa Marta,
+            frente al mar y con la esencia
+            del Caribe colombiano.
+        </p>
+
+    </div>
+
+
+    <div class="panel">
+
+
+        <div class="entrada">
+
+
+            <input
+                type="text"
+                id="mensaje"
+                placeholder="¿Qué estás buscando?"
+                autocomplete="off"
+            >
+
+
+            <button
+                id="botonExplorar"
+                onclick="procesarMensaje()"
+            >
+                Explorar
+            </button>
+
+
+        </div>
+
+
+        <div id="resultado"></div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/*
+ * ============================================================
+ * CONFIGURACIÓN
+ * ============================================================
+ */
+
+
+const API_URL =
+    "http://127.0.0.1:8001/procesar";
+
+
+const WHATSAPP_BASE =
+    "https://wa.me/573138902136";
+
+
+
+/*
+ * ============================================================
+ * REFERENCIAS DEL DOM
+ * ============================================================
+ */
+
+
+const campoMensaje =
+    document.getElementById("mensaje");
+
+
+const resultado =
+    document.getElementById("resultado");
+
+
+const botonExplorar =
+    document.getElementById("botonExplorar");
+
+
+
+/*
+ * ============================================================
+ * ESCAPAR HTML
+ *
+ * Evita insertar directamente contenido potencialmente
+ * peligroso dentro del HTML.
+ * ============================================================
+ */
+
+
+function escaparHTML(valor) {
+
+    if (
+        valor === null ||
+        valor === undefined
+    ) {
+
+        return "";
+    }
+
+
+    return String(valor)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+
+/*
+ * ============================================================
+ * PROCESAR MENSAJE
+ * ============================================================
+ */
+
+
+async function procesarMensaje() {
+
+
+    const mensaje =
+        campoMensaje.value.trim();
+
+
+    /*
+     * Validación
+     */
+
+    if (!mensaje) {
+
+        resultado.innerHTML = `
+
+            <div class="error">
+
+                Escribe algo como:
+
+                <br><br>
+
+                "playa"
+
+                <br>
+
+                "vacaciones"
+
+                <br>
+
+                "frente al mar"
+
+                <br>
+
+                "apartamento frente al mar"
+
+                <br>
+
+                "quiero reservar"
+
+                <br>
+
+                "quiero reservar para 4 personas
+                del 15 al 18 de septiembre"
+
+            </div>
+
+        `;
+
+        campoMensaje.focus();
+
+        return;
+    }
+
+
+
+    /*
+     * Estado de carga
+     */
+
+    botonExplorar.disabled = true;
+
+    resultado.innerHTML = `
+
+        <div class="cargando">
+
+            ⏳ El Cerebro Digital está
+            procesando tu búsqueda...
+
+        </div>
+
+    `;
+
+
+
+    try {
+
+
+        /*
+         * Enviar solicitud a la API
+         */
+
+        const respuestaHTTP =
+            await fetch(
+                API_URL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            mensaje: mensaje
+                        })
+                }
+            );
+
+
+
+        /*
+         * Validar HTTP
+         */
+
+        if (!respuestaHTTP.ok) {
+
+            throw new Error(
+                "La API respondió con HTTP " +
+                respuestaHTTP.status
+            );
+        }
+
+
+
+        /*
+         * Convertir JSON
+         */
+
+        const datos =
+            await respuestaHTTP.json();
+
+
+
+        console.log(
+            "Respuesta completa:",
+            datos
+        );
+
+
+
+        /*
+         * Mostrar respuesta
+         */
+
+        mostrarRespuesta(datos);
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(
+            "Error conectando con el Cerebro Digital:",
+            error
+        );
+
+
+        resultado.innerHTML = `
+
+            <div class="error">
+
+                ❌ No fue posible conectar
+                con el Cerebro Digital.
+
+                <br><br>
+
+                Verifica que Uvicorn esté
+                ejecutándose en el puerto 8001.
+
+                <br><br>
+
+                Detalle:
+                ${escaparHTML(error.message)}
+
+            </div>
+
+        `;
+
+    }
+
+
+    finally {
+
+        botonExplorar.disabled = false;
+
+    }
+
+}
+
+
+
+/*
+ * ============================================================
+ * MOSTRAR RESPUESTA
+ * ============================================================
+ */
+
+
+function mostrarRespuesta(datos) {
+
+
+    const respuesta =
+        datos.respuesta || {};
+
+
+    const intencion =
+        datos.intencion || {};
+
+
+    const recursos =
+        respuesta.recursos_oficiales || {};
+
+
+    /*
+     * ========================================================
+     * DATOS DE RESERVA
+     *
+     * La API 1.6.0 puede entregarlos:
+     *
+     * datos.datos_reserva
+     *
+     * o:
+     *
+     * respuesta.datos_reserva
+     * ========================================================
+     */
+
+
+    const reserva =
+        datos.datos_reserva ||
+        respuesta.datos_reserva ||
+        {};
+
+
+
+    /*
+     * ========================================================
+     * INTENCIONES
+     * ========================================================
+     */
+
+
+    const esReserva =
+        intencion.es_reserva === true ||
+        intencion.tipo === "reserva" ||
+        respuesta.tipo ===
+            "intencion_reserva_detectada";
+
+
+    const esTuristica =
+        intencion.es_turistica === true;
+
+
+    const esInformativa =
+        intencion.es_informativa === true ||
+        intencion.tipo === "informativa" ||
+        respuesta.tipo ===
+            "intencion_informativa_detectada";
+
+
+
+    /*
+     * ========================================================
+     * SI NO HAY NINGUNA INTENCIÓN
+     * ========================================================
+     */
+
+
+    if (
+        !esReserva &&
+        !esTuristica &&
+        !esInformativa
+    ) {
+
+
+        resultado.innerHTML = `
+
+            <div class="respuesta">
+
+                <h2>
+                    🌊 Estamos aquí para ayudarte
+                </h2>
+
+
+                <p>
+                    ${
+                        escaparHTML(
+                            respuesta.mensaje ||
+                            "Cuéntanos qué estás buscando."
+                        )
+                    }
+                </p>
+
+
+                <p>
+
+                    Puedes escribir, por ejemplo:
+
+                    <strong>playa</strong>,
+
+                    <strong>vacaciones</strong>,
+
+                    <strong>frente al mar</strong>
+
+                    o
+
+                    <strong>apartamento</strong>.
+
+                </p>
+
+            </div>
+
+        `;
+
+
+        return;
+    }
+
+
+
+    /*
+     * ========================================================
+     * TÍTULO
+     * ========================================================
+     */
+
+
+    let titulo =
+        "☀️ Descubre el Condominio Reserva del Mar";
+
+
+    if (esReserva) {
+
+        titulo =
+            "🏖️ ¡Excelente! Estás a un paso de Reserva del Mar";
+
+    }
+
+
+    else if (esInformativa) {
+
+        titulo =
+            "🌊 Estamos aquí para ayudarte";
+
+    }
+
+
+
+    /*
+     * ========================================================
+     * WHATSAPP
+     * ========================================================
+     */
+
+
+    let whatsappURL =
+        recursos.whatsapp || "";
+
+
+
+    /*
+     * Si es una reserva, crear un mensaje personalizado
+     */
+
+    if (esReserva) {
+
+
+        const partes = [];
+
+
+        if (reserva.personas) {
+
+            partes.push(
+                `${reserva.personas} personas`
+            );
+
+        }
+
+
+        if (reserva.fecha_llegada) {
+
+            partes.push(
+                `llegada ${reserva.fecha_llegada}`
+            );
+
+        }
+
+
+        if (reserva.fecha_salida) {
+
+            partes.push(
+                `salida ${reserva.fecha_salida}`
+            );
+
+        }
+
+
+
+        let mensajeWhatsApp;
+
+
+
+        if (partes.length > 0) {
+
+            mensajeWhatsApp =
+                "Hola, quiero reservar mi estancia " +
+                "en el Condominio Reserva del Mar " +
+                "para " +
+                partes.join(", ") +
+                ". ¿Me das información y disponibilidad?";
+
+        }
+
+
+        else {
+
+            mensajeWhatsApp =
+                "Hola, quiero reservar mi estancia " +
+                "en el Condominio Reserva del Mar. " +
+                "¿Me das información y disponibilidad?";
+
+        }
+
+
+
+        whatsappURL =
+            WHATSAPP_BASE +
+            "?text=" +
+            encodeURIComponent(
+                mensajeWhatsApp
+            );
+
+    }
+
+
+
+    /*
+     * ========================================================
+     * CONSTRUIR DATOS DE RESERVA
+     * ========================================================
+     */
+
+
+    let bloqueReserva = "";
+
+
+
+    if (esReserva) {
+
+
+        const personas =
+            reserva.personas ??
+            "Por confirmar";
+
+
+        const llegada =
+            reserva.fecha_llegada ??
+            "Por confirmar";
+
+
+        const salida =
+            reserva.fecha_salida ??
+            "Por confirmar";
+
+
+        const completa =
+            reserva.reserva_completa === true;
+
+
+
+        bloqueReserva = `
+
+            <div class="datos-reserva">
+
+                <h3>
+                    📋 Datos de tu reserva
+                </h3>
+
+
+                <div class="dato">
+
+                    👥 Personas:
+
+                    <strong>
+                        ${escaparHTML(personas)}
+                    </strong>
+
+                </div>
+
+
+                <div class="dato">
+
+                    📅 Llegada:
+
+                    <strong>
+                        ${escaparHTML(llegada)}
+                    </strong>
+
+                </div>
+
+
+                <div class="dato">
+
+                    📅 Salida:
+
+                    <strong>
+                        ${escaparHTML(salida)}
+                    </strong>
+
+                </div>
+
+
+                ${
+                    completa
+                    ?
+                    `
+                        <div class="reserva-completa">
+
+                            ✅ Información completa
+
+                        </div>
+                    `
+                    :
+                    `
+                        <div class="reserva-incompleta">
+
+                            🟡 Necesitamos algunos
+                            datos adicionales
+
+                        </div>
+                    `
+                }
+
+            </div>
+
+        `;
+
+    }
+
+
+
+    /*
+     * ========================================================
+     * SECCIÓN DE EXPERIENCIA
+     * ========================================================
+     */
+
+
+    const bloqueExperiencia = `
+
+        <div class="atributos">
+
+            <strong>
+
+                Vive la experiencia
+                del Caribe colombiano:
+
+            </strong>
+
+
+            <p>
+                ☀️ Sol radiante
+            </p>
+
+
+            <p>
+                🏖️ Playas de Santa Marta
+            </p>
+
+
+            <p>
+                🌊 Aventuras acuáticas
+                y deportes náuticos
+            </p>
+
+
+            <p>
+                🎶 Cultura y esencia caribeña
+            </p>
+
+        </div>
+
+    `;
+
+
+
+    /*
+     * ========================================================
+     * SECCIÓN DE RECURSOS
+     * ========================================================
+     */
+
+
+    const bloqueRecursos = `
+
+        <div class="recursos">
+
+            ${crearEnlace(
+                recursos.web,
+                "🌐 Conocer Reserva del Mar"
+            )}
+
+            ${crearEnlace(
+                recursos.google_business,
+                "⭐ Google"
+            )}
+
+            ${crearEnlace(
+                recursos.youtube,
+                "▶️ Video"
+            )}
+
+            ${crearEnlace(
+                recursos.instagram,
+                "📸 Instagram"
+            )}
+
+            ${crearEnlace(
+                recursos.tiktok,
+                "🎵 TikTok"
+            )}
+
+            ${crearEnlace(
+                recursos.facebook,
+                "👍 Facebook"
+            )}
+
+        </div>
+
+    `;
+
+
+
+    /*
+     * ========================================================
+     * WHATSAPP
+     * ========================================================
+     */
+
+
+    const bloqueWhatsApp =
+        whatsappURL
+        ?
+        `
+
+            <a
+                class="whatsapp"
+                href="${escaparHTML(whatsappURL)}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+
+                💬
+
+                ${
+                    esReserva
+                    ?
+                    "Continuar por WhatsApp"
+                    :
+                    "Conocer más por WhatsApp"
+                }
+
+            </a>
+
+        `
+        :
+        "";
+
+
+
+    /*
+     * ========================================================
+     * DETECCIÓN
+     * ========================================================
+     */
+
+
+    const coincidenciasReserva =
+        intencion.coincidencias_reserva ||
+        [];
+
+
+    const coincidenciasTuristicas =
+        intencion.coincidencias_turisticas ||
+        [];
+
+
+    const coincidenciasInformativas =
+        intencion.coincidencias_informativas ||
+        [];
+
+
+
+    let señales = [];
+
+
+
+    if (coincidenciasReserva.length) {
+
+        señales =
+            señales.concat(
+                coincidenciasReserva
+            );
+
+    }
+
+
+    if (coincidenciasTuristicas.length) {
+
+        señales =
+            señales.concat(
+                coincidenciasTuristicas
+            );
+
+    }
+
+
+    if (coincidenciasInformativas.length) {
+
+        señales =
+            señales.concat(
+                coincidenciasInformativas
+            );
+
+    }
+
+
+
+    const bloqueDeteccion = `
+
+        <div class="deteccion">
+
+            🔎 Intención detectada:
+
+            <strong>
+                ${escaparHTML(
+                    intencion.tipo ||
+                    "turística"
+                )}
+            </strong>
+
+
+            ${
+                señales.length
+                ?
+                `
+                    <br>
+
+                    Señales:
+
+                    ${escaparHTML(
+                        señales.join(", ")
+                    )}
+                `
+                :
+                ""
+            }
+
+        </div>
+
+    `;
+
+
+
+    /*
+     * ========================================================
+     * RENDER FINAL
+     * ========================================================
+     */
+
+
+    resultado.innerHTML = `
+
+        <div class="respuesta">
+
+            <h2>
+                ${titulo}
+            </h2>
+
+
+            <p>
+                ${
+                    escaparHTML(
+                        respuesta.mensaje ||
+                        "Descubre una experiencia frente al mar en Santa Marta."
+                    )
+                }
+            </p>
+
+
+            ${bloqueReserva}
+
+
+            ${bloqueExperiencia}
+
+
+            ${bloqueRecursos}
+
+
+            ${bloqueWhatsApp}
+
+
+            ${bloqueDeteccion}
+
+
+            <div class="estado">
+
+                Cerebro Digital activo ·
+
+                versión
+
+                ${escaparHTML(
+                    datos.version ||
+                    "1.6.0"
+                )}
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+
+/*
+ * ============================================================
+ * CREAR ENLACES
+ * ============================================================
+ */
+
+
+function crearEnlace(url, texto) {
+
+
+    if (!url) {
+
+        return "";
+
+    }
+
+
+    return `
+
+        <a
+            class="recurso"
+            href="${escaparHTML(url)}"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+
+            ${texto}
+
+        </a>
+
+    `;
+
+}
+
+
+
+/*
+ * ============================================================
+ * ENTER PARA BUSCAR
+ * ============================================================
+ */
+
+
+campoMensaje.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            procesarMensaje();
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+</html>

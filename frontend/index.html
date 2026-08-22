@@ -22,7 +22,6 @@
         #resultado { margin-top: 25px; }
         .respuesta { padding: 25px; border-radius: 16px; background: #f5fbff; border: 1px solid #d8eaf3; line-height: 1.6; }
         .respuesta h2 { margin-top: 0; }
-        .atributos { margin-top: 20px; padding: 15px; border-radius: 12px; background: white; border: 1px solid #e0edf3; }
         .datos-reserva { margin-top: 20px; padding: 20px; border-radius: 14px; background: #fff; border: 2px solid var(--primary); }
         .datos-reserva h3 { margin-top: 0; color: var(--text); }
         .dato { margin: 10px 0; font-size: 16px; }
@@ -35,8 +34,6 @@
         .whatsapp:hover { opacity: 0.9; }
         .cargando { text-align: center; color: #526b7d; padding: 15px; }
         .error { padding: 15px; border-radius: 10px; background: #fff0f0; color: #a33; }
-        .estado { margin-top: 15px; color: #526b7d; font-size: 14px; }
-        .deteccion { margin-top: 15px; padding: 12px; border-radius: 10px; background: #eaf8ff; font-size: 14px; }
         @media (max-width: 650px) {
             .entrada { flex-direction: column; }
             button { width: 100%; }
@@ -64,7 +61,6 @@
 </div>
 
 <script>
-// URL actualizada apuntando directamente a tu backend en Render
 const API_URL = "https://cerebro-reserva-mar.onrender.com/api/chat";
 const WHATSAPP_BASE = "https://wa.me/573138902136";
 
@@ -129,7 +125,6 @@ async function procesarMensaje() {
 }
 
 function mostrarRespuesta(datos) {
-    // Adaptado al nuevo formato JSON devuelto por /api/chat
     const respuesta = datos.respuesta || {};
     const intencion = datos.intencion || {};
     const recursos = respuesta.recursos_oficiales || {};

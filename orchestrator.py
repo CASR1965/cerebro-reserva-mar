@@ -1,5 +1,6 @@
 import re
 import unicodedata
+from datetime import datetime
 
 class Orchestrator:
     def __init__(self):
@@ -24,41 +25,63 @@ class Orchestrator:
         )
         return texto
 
+    def extraer_fechas(self, mensaje_norm):
+        # Patrón simple para detectar menciones de fechas (ej: "del 10 al 15")
+        match_rango = re.search(r'(?:del\s*)?(\d{1,2})\s*(?:al|hasta)\s*(\d{1,2})', mensaje_norm)
+        if match_rango:
+            return f"Días {match_rango.group(1)} al {match_rango.group(2)}"
+        return "Por confirmar"
+
     def procesar(self, mensaje_usuario):
         mensaje_norm = self.normalizar_texto(mensaje_usuario)
         
-        # Detección simple de intenciones
-        es_reserva = any(k in mensaje_norm for k in ["reservar", "reserva", "precio", "disponibilidad", "cuanto vale"])
-        es_turistica = any(k in mensaje_norm for k in ["playa", "vacaciones", "mar", "santa marta", "caribe", "apartamento"])
+        # 1. Detección refinada de intenciones
+        es_reserva = any(k in mensaje_norm for k in ["reservar", "reserva", "precio", "disponibilidad", "cuanto vale", "cotizacion"])
+        es_turistica = any(k in mensaje_norm for k in ["playa", "vacaciones", "mar", "santa marta", "caribe", "apartamento", "salguero"])
         
-        tipo_intencion = "turística"
+        tipo_intencion = "general"
         if es_reserva:
             tipo_intencion = "reserva"
         elif es_turistica:
             tipo_intencion = "turística"
 
-        # Simulación de extracción de datos de reserva
+        # 2. Extracción de entidades (Personas y Fechas)
         personas = None
-        match_personas = re.search(r'(\d+)\s*(personas|persona|huespedes)', mensaje_norm)
+        match_personas = re.search(r'(\d+)\s*(personas|persona|huespedes|adultos)', mensaje_norm)
         if match_personas:
             personas = int(match_personas.group(1))
 
+        fecha_estancia = self.extraer_fechas(mensaje_norm)
+        reserva_completa = bool(personas and fecha_estancia != "Por confirmar")
+
+        # 3. Construcción del mensaje de respuesta adaptado
+        if es_reserva:
+            mensaje_respuesta = (
+                "¡Excelente elección! Estás a un paso de asegurar tu estancia en el Condominio Reserva del Mar (Playa Salguero). "
+                "Para brindarte disponibilidad inmediata y tarifas exactas, contáctanos directamente por nuestro canal oficial."
+            )
+        else:
+            mensaje_respuesta = (
+                "Bienvenido al Condominio Reserva del Mar en Playa Salguero, Santa Marta. "
+                "Disfruta del mejor descanso frente al mar Caribe con exclusividad y confort."
+            )
+
         return {
-            "version": "1.6.0",
+            "version": "1.7.0-geo",
             "intencion": {
                 "tipo": tipo_intencion,
                 "es_reserva": es_reserva,
                 "es_turistica": es_turistica,
-                "coincidencias_reserva": [mensaje_usuario] if es_reserva else []
+                "coincidencias": [mensaje_usuario] if (es_reserva or es_turistica) else []
             },
             "datos_reserva": {
                 "personas": personas,
-                "fecha_llegada": "Por confirmar",
+                "fecha_llegada": fecha_estancia,
                 "fecha_salida": "Por confirmar",
-                "reserva_completa": False
+                "reserva_completa": reserva_completa
             },
             "respuesta": {
-                "mensaje": "Bienvenido al Condominio Reserva del Mar en Playa Salguero, Santa Marta. El mejor destino frente al mar.",
+                "mensaje": mensaje_respuesta,
                 "recursos_oficiales": self.recursos_oficiales
             }
         }

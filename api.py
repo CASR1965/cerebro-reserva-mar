@@ -1,26 +1,16 @@
-from flask import Blueprint, jsonify, request
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from orchestrator import Orchestrator
 
-api_bp = Blueprint('api', __name__)
-orquestador = Orchestrator()
+app = FastAPI()
+app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-@api_bp.route("/info", methods=["GET"])
-def info():
-    return jsonify({
-        "proyecto": "Cerebro Digital Reserva del Mar",
-        "version": "1.6.0",
-        "empresa": "Condominio Reserva del Mar",
-        "ubicacion": "Playa Salguero, Santa Marta, Colombia",
-        "web": "https://reservadelmar.lovable.app/"
-    })
+orc = Orchestrator()
 
-@api_bp.route("/health", methods=["GET"])
-def health():
-    return jsonify({"status": "ok"})
+@app.get("/")
+def read_root():
+    return {"status": "online"}
 
-@api_bp.route("/procesar", methods=["POST"])
-def procesar():
-    data = request.get_json()
-    mensaje = data.get("mensaje", "") if data else ""
-    resultado = orquestador.procesar(mensaje)
-    return jsonify(resultado)
+@app.post("/api/chat")
+def chat(data: dict):
+    return orc.procesar(data.get("mensaje", ""))

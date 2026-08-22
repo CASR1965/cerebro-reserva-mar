@@ -9,8 +9,9 @@ orc = Orchestrator()
 
 @app.get("/")
 def read_root():
-    return {"status": "online"}
+    return {"status": "online", "proyecto": "Reserva del Mar GEO API"}
 
 @app.post("/api/chat")
 def chat(data: dict):
-    return orc.procesar(data.get("mensaje", ""))
+    mensaje = data.get("mensaje", "")
+    return orc.procesar(mensaje)

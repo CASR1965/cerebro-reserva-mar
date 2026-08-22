@@ -1,61 +1,26 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-
+from flask import Blueprint, jsonify, request
 from orchestrator import Orchestrator
 
-
-app = FastAPI(
-    title="Cerebro Digital - Reserva del Mar",
-    description="API central del sistema inteligente de conversión turística.",
-    version="1.0.0"
-)
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
+api_bp = Blueprint('api', __name__)
 orquestador = Orchestrator()
 
-
-class Solicitud(BaseModel):
-    mensaje: str
-
-
-@app.get("/")
-def inicio():
-    return {
-        "nombre": "Cerebro Digital - Reserva del Mar",
-        "estado": "activo",
-        "mensaje": "El Cerebro Digital está funcionando."
-    }
-
-
-@app.get("/health")
-def health():
-    return {
-        "status": "ok"
-    }
-
-
-@app.get("/info")
+@api_bp.route("/info", methods=["GET"])
 def info():
-    return {
+    return jsonify({
         "proyecto": "Cerebro Digital Reserva del Mar",
-        "version": "1.0.0",
+        "version": "1.6.0",
         "empresa": "Condominio Reserva del Mar",
         "ubicacion": "Playa Salguero, Santa Marta, Colombia",
         "web": "https://reservadelmar.lovable.app/"
-    }
+    })
 
+@api_bp.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "ok"})
 
-@app.post("/procesar")
-def procesar(solicitud: Solicitud):
-    resultado = orquestador.procesar(solicitud.mensaje)
-    return resultado
+@api_bp.route("/procesar", methods=["POST"])
+def procesar():
+    data = request.get_json()
+    mensaje = data.get("mensaje", "") if data else ""
+    resultado = orquestador.procesar(mensaje)
+    return jsonify(resultado)
